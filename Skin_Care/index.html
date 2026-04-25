@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowCart - Premium Skincare</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class='bx bx-smile'></i>
+                <span>GlowCart</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="cart.html" class="cart-icon">
+                    <i class='bx bx-cart'></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+                <button class="btn-login" onclick="window.location.href='login.html'">Login</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Discover Your Perfect Skin</h1>
+            <p class="hero-subtitle">Premium skincare products tailored for your beauty routine</p>
+            <button class="btn-primary" onclick="window.location.href='products.html'">
+                Shop Now
+                <i class='bx bx-right-arrow-alt'></i>
+            </button>
+        </div>
+        <div class="hero-image">
+            <div class="floating-card">
+                <i class='bx bx-shield-quarter'></i>
+                <p>100% Authentic</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products Preview -->
+    <section class="featured-section">
+        <div class="section-header">
+            <h2>Trending Products</h2>
+            <p>Handpicked bestsellers for glowing skin</p>
+        </div>
+        <div class="products-preview" id="featuredProducts">
+            <!-- Products will be loaded here -->
+        </div>
+        <div class="view-all-container">
+            <button class="btn-secondary" onclick="window.location.href='products.html'">
+                View All Products
+            </button>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="feature-card">
+            <i class='bx bx-package'></i>
+            <h3>Free Shipping</h3>
+            <p>On orders above ₹499</p>
+        </div>
+        <div class="feature-card">
+            <i class='bx bx-lock-alt'></i>
+            <h3>Secure Payment</h3>
+            <p>100% secure transactions</p>
+        </div>
+        <div class="feature-card">
+            <i class='bx bx-support'></i>
+            <h3>24/7 Support</h3>
+            <p>Dedicated customer care</p>
+        </div>
+        <div class="feature-card">
+            <i class='bx bx-refresh'></i>
+            <h3>Easy Returns</h3>
+            <p>30-day return policy</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>GlowCart</h4>
+                <p>Your trusted partner for premium skincare solutions</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="products.html">Shop</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="#"><i class='bx bxl-instagram'></i></a>
+                    <a href="#"><i class='bx bxl-facebook'></i></a>
+                    <a href="#"><i class='bx bxl-twitter'></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 GlowCart. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Load featured products on homepage
+        const featuredProducts = products.slice(0, 4);
+        renderProducts(featuredProducts, 'featuredProducts');
+        updateCartCount();
+    </script>
+</body>
+</html>
