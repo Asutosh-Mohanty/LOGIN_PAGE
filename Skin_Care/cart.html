@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - GlowCart</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class='bx bx-smile'></i>
+                <span>GlowCart</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="cart.html" class="cart-icon active">
+                    <i class='bx bx-cart'></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+                <button class="btn-login" onclick="checkLoginAndRedirect()">
+                    <span id="userDisplay">Login</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Page -->
+    <div class="cart-container">
+        <h1>Shopping Cart</h1>
+        
+        <div class="cart-content" id="cartContent">
+            <!-- Empty cart state -->
+            <div class="empty-cart" id="emptyCart" style="display: none;">
+                <i class='bx bx-cart-alt'></i>
+                <h3>Your cart is empty</h3>
+                <p>Add some products to get started</p>
+                <button class="btn-primary" onclick="window.location.href='products.html'">
+                    Continue Shopping
+                </button>
+            </div>
+
+            <!-- Cart items -->
+            <div class="cart-layout" id="cartLayout">
+                <div class="cart-items" id="cartItems">
+                    <!-- Items will be rendered here -->
+                </div>
+
+                <!-- Cart Summary -->
+                <div class="cart-summary">
+                    <h3>Order Summary</h3>
+                    
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="subtotal">₹0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span id="shipping">₹0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax (18%)</span>
+                        <span id="tax">₹0</span>
+                    </div>
+                    <hr>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span id="total">₹0</span>
+                    </div>
+
+                    <button class="btn-checkout" onclick="handleCheckout()">
+                        Proceed to Checkout
+                        <i class='bx bx-right-arrow-alt'></i>
+                    </button>
+
+                    <button class="btn-continue" onclick="window.location.href='products.html'">
+                        <i class='bx bx-left-arrow-alt'></i>
+                        Continue Shopping
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>GlowCart</h4>
+                <p>Your trusted partner for premium skincare solutions</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="products.html">Shop</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="#"><i class='bx bxl-instagram'></i></a>
+                    <a href="#"><i class='bx bxl-facebook'></i></a>
+                    <a href="#"><i class='bx bxl-twitter'></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 GlowCart. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Cart logic
+        function renderCart() {
+            const cart = getCart();
+            const cartItems = document.getElementById('cartItems');
+            const emptyCart = document.getElementById('emptyCart');
+            const cartLayout = document.getElementById('cartLayout');
+
+            if (cart.length === 0) {
+                emptyCart.style.display = 'flex';
+                cartLayout.style.display = 'none';
+                return;
+            }
+
+            emptyCart.style.display = 'none';
+            cartLayout.style.display = 'grid';
+
+            cartItems.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="item-details">
+                        <h4>${item.name}</h4>
+                        <p class="item-category">${item.category}</p>
+                    </div>
+                    <div class="item-quantity">
+                        <button onclick="updateQuantity(${item.id}, -1)">
+                            <i class='bx bx-minus'></i>
+                        </button>
+                        <span>${item.quantity}</span>
+                        <button onclick="updateQuantity(${item.id}, 1)">
+                            <i class='bx bx-plus'></i>
+                        </button>
+                    </div>
+                    <div class="item-price">
+                        ₹${item.price * item.quantity}
+                    </div>
+                    <button class="item-remove" onclick="removeFromCart(${item.id})">
+                        <i class='bx bx-trash'></i>
+                    </button>
+                </div>
+            `).join('');
+
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const cart = getCart();
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = subtotal > 499 ? 0 : 40;
+            const tax = Math.round(subtotal * 0.18);
+            const total = subtotal + shipping + tax;
+
+            document.getElementById('subtotal').textContent = `₹${subtotal}`;
+            document.getElementById('shipping').textContent = shipping === 0 ? 'FREE' : `₹${shipping}`;
+            document.getElementById('tax').textContent = `₹${tax}`;
+            document.getElementById('total').textContent = `₹${total}`;
+        }
+
+        function updateQuantity(productId, change) {
+            let cart = getCart();
+            const item = cart.find(i => i.id === productId);
+            
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.id !== productId);
+                }
+                saveCart(cart);
+                renderCart();
+                updateCartCount();
+            }
+        }
+
+        function handleCheckout() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showToast('Please login to checkout', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+                return;
+            }
+
+            showToast('Redirecting to checkout...', 'success');
+            // In real app, redirect to checkout page
+        }
+
+        // Initialize cart
+        renderCart();
+        updateCartCount();
+        checkUserLogin();
+    </script>
+</body>
+</html>
