@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LOGIN Page</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Icons + Fonts -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <form id="loginForm" novalidate>
+            <h1>Login</h1>
+
+            <!-- Username -->
+            <div class="input-box">
+                <input type="text" id="username" placeholder="Username" autocomplete="username" required>
+                <i class="bx bxs-user"></i>
+            </div>
+            <span class="error-msg" id="usernameError">Please enter your username.</span>
+
+            <!-- Password -->
+            <div class="input-box spacer">
+                <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
+                <i class="bx bxs-lock-alt toggle-pw" id="togglePw" title="Show / Hide Password"></i>
+            </div>
+
+            <div id="strengthBar"></div>
+            <div id="strengthLabel"></div>
+            <span class="error-msg" id="passwordError">Password must be at least 6 characters.</span>
+
+            <!-- Remember / Forgot -->
+            <div class="remember-forgot">
+                <label>
+                    <input type="checkbox" id="rememberMe"> Remember me
+                </label>
+                <a href="#">Forgot password?</a>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn" id="loginBtn">
+                <span class="spinner" id="spinner"></span>
+                <span id="btnText">Login</span>
+            </button>
+
+            <!-- Register -->
+            <div class="register-link">
+                <p>Don't have an account? <a href="#">Register</a></p>
+            </div>
+        </form>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- External JS -->
+    <script src="script.js"></script>
+
+</body>
+</html>
