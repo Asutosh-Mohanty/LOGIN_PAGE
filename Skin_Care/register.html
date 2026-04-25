@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - GlowCart</title>
+    <link rel="stylesheet" href="css/auth.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Back to Home -->
+    <a href="index.html" class="back-home">
+        <i class='bx bx-arrow-back'></i> Back to Home
+    </a>
+
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="brand">
+                <i class='bx bx-smile'></i>
+                <h1>GlowCart</h1>
+            </div>
+
+            <h2>Create Account</h2>
+            <p class="subtitle">Start your skincare journey today</p>
+
+            <form id="registerForm" novalidate>
+                <!-- Full Name -->
+                <div class="input-group">
+                    <label for="fullname">Full Name</label>
+                    <div class="input-wrapper">
+                        <i class='bx bxs-user'></i>
+                        <input type="text" id="fullname" placeholder="Enter your full name" required>
+                    </div>
+                    <span class="error-msg" id="fullnameError">Please enter your full name</span>
+                </div>
+
+                <!-- Email -->
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <div class="input-wrapper">
+                        <i class='bx bxs-envelope'></i>
+                        <input type="email" id="email" placeholder="Enter your email" autocomplete="email" required>
+                    </div>
+                    <span class="error-msg" id="emailError">Please enter a valid email</span>
+                </div>
+
+                <!-- Username -->
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <i class='bx bxs-user-circle'></i>
+                        <input type="text" id="username" placeholder="Choose a username" autocomplete="username" required>
+                    </div>
+                    <span class="error-msg" id="usernameError">Username must be at least 3 characters</span>
+                </div>
+
+                <!-- Password -->
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <i class='bx bxs-lock-alt'></i>
+                        <input type="password" id="password" placeholder="Create a password" autocomplete="new-password" required>
+                        <i class='bx bx-hide toggle-password' id="togglePassword"></i>
+                    </div>
+                    
+                    <!-- Password Strength -->
+                    <div id="strengthBar"></div>
+                    <div id="strengthLabel"></div>
+                    <span class="error-msg" id="passwordError">Password must be at least 6 characters</span>
+                </div>
+
+                <!-- Terms -->
+                <label class="terms-label">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <span>I agree to the <a href="#">Terms & Conditions</a></span>
+                </label>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-submit" id="registerBtn">
+                    <span class="btn-text" id="btnText">Create Account</span>
+                    <span class="spinner" id="spinner"></span>
+                </button>
+            </form>
+
+            <!-- Login Link -->
+            <p class="switch-auth">
+                Already have an account? <a href="login.html">Login</a>
+            </p>
+        </div>
+
+        <!-- Side Image -->
+        <div class="auth-visual">
+            <div class="visual-content">
+                <h3>Join the GlowCart Family</h3>
+                <p>Discover premium skincare products curated just for you</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Register-specific logic
+        const registerForm = document.getElementById('registerForm');
+        const fullnameInput = document.getElementById('fullname');
+        const emailInput = document.getElementById('email');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const agreeTerms = document.getElementById('agreeTerms');
+        const registerBtn = document.getElementById('registerBtn');
+        
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const fullname = fullnameInput.value.trim();
+            const email = emailInput.value.trim();
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            
+            let valid = true;
+
+            // Validate fullname
+            if (!fullname) {
+                showError(fullnameInput, document.getElementById('fullnameError'));
+                valid = false;
+            }
+
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                showError(emailInput, document.getElementById('emailError'));
+                valid = false;
+            }
+
+            // Validate username
+            if (!username || username.length < 3) {
+                showError(usernameInput, document.getElementById('usernameError'));
+                valid = false;
+            }
+
+            // Validate password
+            if (!password || password.length < 6) {
+                showError(passwordInput, document.getElementById('passwordError'));
+                valid = false;
+            }
+
+            // Check terms
+            if (!agreeTerms.checked) {
+                showToast('Please accept the terms and conditions', 'error');
+                valid = false;
+            }
+
+            if (!valid) return;
+
+            // Show loading
+            registerBtn.disabled = true;
+            document.getElementById('spinner').style.display = 'inline-block';
+            document.getElementById('btnText').textContent = 'Creating...';
+
+            // Send to backend
+            fetch('http://localhost:5000/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fullname, email, username, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                registerBtn.disabled = false;
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('btnText').textContent = 'Create Account';
+
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1500);
+                } else {
+                    showToast(data.message, 'error');
+                }
+            })
+            .catch(() => {
+                registerBtn.disabled = false;
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('btnText').textContent = 'Create Account';
+                showToast('Server error. Please try again.', 'error');
+            });
+        });
+
+        // Password strength indicator
+        passwordInput.addEventListener('input', () => {
+            clearError(passwordInput, document.getElementById('passwordError'));
+            const val = passwordInput.value;
+
+            let score = 0;
+            if (val.length >= 6) score++;
+            if (val.length >= 10) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const widths = ['20%','40%','60%','80%','100%'];
+            const colors = ['#e53935','#fb8c00','#fdd835','#43a047','#1b5e20'];
+            const labels = ['Very Weak','Weak','Fair','Strong','Very Strong'];
+
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthLabel = document.getElementById('strengthLabel');
+
+            if (score > 0) {
+                strengthBar.style.width = widths[Math.min(score-1,4)];
+                strengthBar.style.background = colors[Math.min(score-1,4)];
+                strengthLabel.textContent = `Strength: ${labels[Math.min(score-1,4)]}`;
+            } else {
+                strengthBar.style.width = '0';
+                strengthLabel.textContent = '';
+            }
+        });
+    </script>
+</body>
+</html>
