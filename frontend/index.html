@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlowCart</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-page="home">
+  <nav>
+    <div><a href="index.html"><strong>GlowCart</strong></a></div>
+    <div>
+      <a href="products.html">Products</a>
+      <a href="cart.html">Cart (<span id="cartCount">0</span>)</a>
+      <span id="navAuth"></span>
+      <button onclick="document.body.classList.toggle('dark')">Dark</button>
+    </div>
+  </nav>
+  <main>
+    <h1>Production-ready local skincare store</h1>
+    <p>Browse products, manage cart, checkout, and view orders with JWT-based auth and DB storage.</p>
+    <a href="products.html"><button>Shop now</button></a>
+  </main>
+  <div id="toast" class="toast"></div>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

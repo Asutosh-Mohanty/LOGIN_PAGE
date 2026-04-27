@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin</title><link rel="stylesheet" href="assets/css/styles.css"></head>
+<body data-page="admin">
+<nav><div><a href="index.html"><strong>GlowCart</strong></a></div><div><a href="products.html">Products</a><a href="cart.html">Cart (<span id="cartCount">0</span>)</a><span id="navAuth"></span></div></nav>
+<main>
+  <h1>Admin Product Management</h1>
+  <form id="createProductForm" class="filters">
+    <input id="pname" placeholder="Name" required>
+    <input id="pdesc" placeholder="Description">
+    <input id="pcategory" placeholder="Category" required>
+    <input id="pskinType" placeholder="Skin type CSV">
+    <input id="pprice" type="number" placeholder="Price" required>
+    <input id="pstock" type="number" placeholder="Stock" required>
+    <input id="pimage" placeholder="Image path e.g /images/new.jpg">
+    <button>Create</button>
+  </form>
+  <section id="adminProducts"></section>
+</main>
+<div id="toast" class="toast"></div>
+<script src="assets/js/app.js"></script>
+</body></html>

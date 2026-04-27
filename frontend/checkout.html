@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Checkout</title><link rel="stylesheet" href="assets/css/styles.css"></head>
+<body data-page="checkout">
+<nav><div><a href="index.html"><strong>GlowCart</strong></a></div><div><a href="products.html">Products</a><a href="cart.html">Cart (<span id="cartCount">0</span>)</a><span id="navAuth"></span></div></nav>
+<main>
+  <h1>Checkout</h1>
+  <form id="checkoutForm">
+    <input id="line1" placeholder="Address line 1" required>
+    <input id="city" placeholder="City" required>
+    <input id="state" placeholder="State" required>
+    <input id="postalCode" placeholder="Postal code" required>
+    <select id="paymentMethod"><option value="MOCK_UPI">Mock UPI</option><option value="COD">Cash on delivery</option></select>
+    <button type="submit">Place order</button>
+  </form>
+</main>
+<div id="toast" class="toast"></div>
+<script src="assets/js/app.js"></script>
+</body></html>

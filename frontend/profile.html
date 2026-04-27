@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Profile</title><link rel="stylesheet" href="assets/css/styles.css"></head>
+<body data-page="profile">
+<nav><div><a href="index.html"><strong>GlowCart</strong></a></div><div><a href="products.html">Products</a><a href="cart.html">Cart (<span id="cartCount">0</span>)</a><span id="navAuth"></span></div></nav>
+<main>
+  <h1>Profile</h1>
+  <form id="profileForm"><input id="fullname" required><select id="skinTypeProfile"><option value="">Select skin type</option><option>oily</option><option>dry</option><option>combination</option><option>sensitive</option></select><button>Update profile</button></form>
+  <h2>Change password</h2>
+  <form id="passwordForm"><input id="currentPassword" type="password" placeholder="Current password" required><input id="newPassword" type="password" placeholder="New password" required><button>Change password</button></form>
+  <a href="orders.html">View order history</a>
+</main>
+<div id="toast" class="toast"></div>
+<script src="assets/js/app.js"></script>
+</body></html>

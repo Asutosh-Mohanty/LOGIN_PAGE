@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Products</title><link rel="stylesheet" href="assets/css/styles.css"></head>
+<body data-page="products">
+<nav><div><a href="index.html"><strong>GlowCart</strong></a></div><div><a href="products.html">Products</a><a href="cart.html">Cart (<span id="cartCount">0</span>)</a><span id="navAuth"></span></div></nav>
+<main>
+  <h1>Products</h1>
+  <section class="filters">
+    <input id="search" placeholder="Search product">
+    <select id="category"><option value="">All category</option><option>serum</option><option>facewash</option><option>sunscreen</option><option>moisturizer</option></select>
+    <select id="skinType"><option value="">All skin type</option><option>oily</option><option>dry</option><option>combination</option><option>sensitive</option></select>
+    <input id="minPrice" type="number" placeholder="Min price">
+    <input id="maxPrice" type="number" placeholder="Max price">
+    <select id="sort"><option value="newest">Newest</option><option value="price_asc">Price low-high</option><option value="price_desc">Price high-low</option></select>
+    <input id="page" type="hidden" value="1">
+  </section>
+  <div class="row"><button id="prevPage">Prev</button><span id="pageInfo">1/1</span><button id="nextPage">Next</button></div>
+  <section id="productsGrid" class="grid"></section>
+</main>
+<div id="toast" class="toast"></div>
+<script src="assets/js/app.js"></script>
+</body></html>
