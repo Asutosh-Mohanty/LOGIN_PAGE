@@ -110,6 +110,13 @@ const products = [
     }
 ];
 
+const API_BASE_URL = 'http://localhost:5000';
+const APP_BASE_PATH = '/Skin_Care';
+
+function navigateTo(pageName) {
+    window.location.href = `${APP_BASE_PATH}/${pageName}`;
+}
+
 // ========== CART MANAGEMENT ==========
 function getCart() {
     const cart = localStorage.getItem('cart');
@@ -126,7 +133,7 @@ function addToCart(productId) {
     if (!token) {
         showToast('Please login to add items to cart', 'error');
         setTimeout(() => {
-            window.location.href = 'login.html';
+            navigateTo('login.html');
         }, 1500);
         return;
     }
@@ -194,7 +201,7 @@ function renderProducts(productList, containerId) {
 
     container.innerHTML = productList.map(product => `
         <div class="product-card">
-            <img src="${product.image}" alt="${product.name}" class="product-image">
+            <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy" onerror="handleImageError(this, '${product.name.replace(/'/g, "\\'")}')">
             <div class="product-info">
                 <h3 class="product-name">${product.name}</h3>
                 <p class="product-category">${product.category}</p>
@@ -208,6 +215,12 @@ function renderProducts(productList, containerId) {
             </div>
         </div>
     `).join('');
+}
+
+function handleImageError(imgElement, productName) {
+    const safeName = encodeURIComponent(productName || 'Skincare Product');
+    imgElement.onerror = null;
+    imgElement.src = `https://placehold.co/600x600/eaf4ff/2d5f8d?text=${safeName}`;
 }
 
 // ========== TOAST NOTIFICATION ==========
@@ -224,14 +237,142 @@ function showToast(message, type = 'success') {
 }
 
 // ========== USER LOGIN CHECK ==========
+function clearSession() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('fullname');
+    localStorage.removeItem('email');
+    localStorage.removeItem('userId');
+}
+
+function closeSettingsMenu() {
+    const menu = document.querySelector('.settings-menu');
+    if (menu) menu.classList.remove('show');
+}
+
+function openSettingsMenu() {
+    const menu = document.querySelector('.settings-menu');
+    if (menu) menu.classList.toggle('show');
+}
+
+function createSettingsMenu() {
+    const navActions = document.querySelector('.nav-actions');
+    if (!navActions || navActions.querySelector('.settings-menu')) return;
+
+    const menu = document.createElement('div');
+    menu.className = 'settings-menu';
+    menu.innerHTML = `
+        <button class="settings-item" type="button" onclick="goToDashboard()">
+            <i class='bx bx-grid-alt'></i> Dashboard
+        </button>
+        <button class="settings-item" type="button" onclick="logoutUser()">
+            <i class='bx bx-log-out'></i> Logout
+        </button>
+        <button class="settings-item danger" type="button" onclick="deleteCurrentAccount()">
+            <i class='bx bx-trash'></i> Delete Account
+        </button>
+    `;
+    navActions.appendChild(menu);
+}
+
+function goToDashboard() {
+    closeSettingsMenu();
+    navigateTo('dashboard.html');
+}
+
+function logoutUser() {
+    closeSettingsMenu();
+    clearSession();
+    showToast('Logged out successfully', 'success');
+    setTimeout(() => {
+        navigateTo('index.html');
+    }, 700);
+}
+
+async function deleteCurrentAccount() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        showToast('Please login first', 'error');
+        return;
+    }
+
+    const confirmed = confirm('Delete your account permanently? This cannot be undone.');
+    if (!confirmed) return;
+
+    try {
+        const response = await fetch('http://localhost:5000/users/me', {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            showToast(data.message || 'Unable to delete account', 'error');
+            return;
+        }
+
+        clearSession();
+        showToast('Account deleted successfully', 'success');
+        setTimeout(() => {
+            navigateTo('index.html');
+        }, 900);
+    } catch (error) {
+        showToast('Cannot connect to server', 'error');
+    }
+}
+
+async function syncUserProfileFromBackend() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/me`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            clearSession();
+            return;
+        }
+
+        const data = await response.json();
+        if (!data.success || !data.user) {
+            clearSession();
+            return;
+        }
+
+        localStorage.setItem('username', data.user.username || '');
+        localStorage.setItem('fullname', data.user.fullname || '');
+        localStorage.setItem('email', data.user.email || '');
+        localStorage.setItem('userId', String(data.user.id));
+    } catch (error) {
+        // Keep existing local data if server is temporarily unavailable.
+    }
+}
+
 function checkUserLogin() {
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
+    const loginButtons = document.querySelectorAll('.btn-login');
     const userDisplayElements = document.querySelectorAll('#userDisplay');
     
     if (token && username) {
+        createSettingsMenu();
         userDisplayElements.forEach(el => {
-            el.textContent = username;
+            el.textContent = `${username} \u25BE`;
+        });
+        loginButtons.forEach(btn => {
+            btn.onclick = openSettingsMenu;
+        });
+    } else {
+        userDisplayElements.forEach(el => {
+            el.textContent = 'Login';
+        });
+        loginButtons.forEach(btn => {
+            btn.onclick = checkLoginAndRedirect;
         });
     }
 }
@@ -239,24 +380,21 @@ function checkUserLogin() {
 function checkLoginAndRedirect() {
     const token = localStorage.getItem('token');
     if (token) {
-        // User is logged in - show logout option or profile
-        const confirmed = confirm('Do you want to logout?');
-        if (confirmed) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('username');
-            showToast('Logged out successfully', 'success');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1000);
-        }
+        openSettingsMenu();
     } else {
-        // User not logged in - redirect to login
-        window.location.href = 'login.html';
+        navigateTo('login.html');
     }
 }
 
 // ========== INITIALIZE ON PAGE LOAD ==========
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     updateCartCount();
+    await syncUserProfileFromBackend();
     checkUserLogin();
+    document.addEventListener('click', (event) => {
+        const insideActions = event.target.closest('.nav-actions');
+        if (!insideActions) {
+            closeSettingsMenu();
+        }
+    });
 });

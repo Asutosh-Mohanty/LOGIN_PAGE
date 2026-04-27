@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GlowCart</title>
+    <link rel="stylesheet" href="../CSS/main.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class='bx bx-smile'></i>
+                <span>GlowCart</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="cart.html" class="cart-icon">
+                    <i class='bx bx-cart'></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+                <button class="btn-login" onclick="checkLoginAndRedirect()">
+                    <span id="userDisplay">Login</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="cart-container">
+        <h1>Dashboard</h1>
+        <div class="info-card">
+            <h2>Welcome Back</h2>
+            <p id="dashboardName">User: -</p>
+            <p id="dashboardUsername">Username: -</p>
+            <p id="dashboardEmail">Email: -</p>
+            <div class="info-highlights" style="margin-top:1.2rem;">
+                <span onclick="window.location.href='products.html'" style="cursor:pointer;">Browse Products</span>
+                <span onclick="window.location.href='cart.html'" style="cursor:pointer;">View Cart</span>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="../JS/main.js"></script>
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/Skin_Care/login.html';
+        } else {
+            document.getElementById('dashboardName').textContent = `Name: ${localStorage.getItem('fullname') || '-'}`;
+            document.getElementById('dashboardUsername').textContent = `Username: ${localStorage.getItem('username') || '-'}`;
+            document.getElementById('dashboardEmail').textContent = `Email: ${localStorage.getItem('email') || '-'}`;
+        }
+    </script>
+</body>
+</html>

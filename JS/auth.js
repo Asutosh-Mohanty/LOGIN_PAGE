@@ -1,10 +1,18 @@
-// ========== AUTH HELPER FUNCTIONS ==========
+const API_BASE_URL = 'http://localhost:5000';
+const APP_BASE_PATH = '/Skin_Care';
+
+function navigateTo(pageName) {
+    window.location.href = `${APP_BASE_PATH}/${pageName}`;
+}
+
 function showError(input, errorEl) {
+    if (!input || !errorEl) return;
     input.classList.add('error-border');
     errorEl.style.display = 'block';
 }
 
 function clearError(input, errorEl) {
+    if (!input || !errorEl) return;
     input.classList.remove('error-border');
     errorEl.style.display = 'none';
 }
@@ -12,147 +20,215 @@ function clearError(input, errorEl) {
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     if (!toast) return;
-    
+
     toast.textContent = message;
     toast.className = `toast ${type} show`;
-    
+
     setTimeout(() => {
         toast.classList.remove('show');
     }, 3000);
 }
 
-// ========== LOGIN PAGE LOGIC ==========
+function setLoadingState(button, spinner, textEl, loadingText, isLoading) {
+    if (button) button.disabled = isLoading;
+    if (spinner) spinner.style.display = isLoading ? 'inline-block' : 'none';
+    if (textEl) textEl.textContent = isLoading ? loadingText : textEl.dataset.defaultText;
+}
+
+function saveSessionFromResponse(data, fallbackUsername) {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('username', data.user?.username || fallbackUsername || '');
+    localStorage.setItem('fullname', data.user?.fullname || '');
+    localStorage.setItem('email', data.user?.email || '');
+    if (data.user?.id !== undefined) {
+        localStorage.setItem('userId', String(data.user.id));
+    }
+}
+
+function bindPasswordToggle(toggleIcon, passwordInput) {
+    if (!toggleIcon || !passwordInput) return;
+    toggleIcon.addEventListener('click', () => {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        toggleIcon.classList.toggle('bx-show', type === 'text');
+        toggleIcon.classList.toggle('bx-hide', type !== 'text');
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
-    
-    // LOGIN FORM HANDLER
+
     if (loginForm) {
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
-        const togglePassword = document.getElementById('togglePassword');
         const rememberMe = document.getElementById('rememberMe');
+        const togglePassword = document.getElementById('togglePassword');
         const loginBtn = document.getElementById('loginBtn');
         const spinner = document.getElementById('spinner');
         const btnText = document.getElementById('btnText');
-        
-        // Clear errors on input
-        usernameInput?.addEventListener('input', () => {
-            clearError(usernameInput, document.getElementById('usernameError'));
-        });
-        
-        passwordInput?.addEventListener('input', () => {
-            clearError(passwordInput, document.getElementById('passwordError'));
-        });
-        
-        // Toggle password visibility
-        togglePassword?.addEventListener('click', () => {
-            const type = passwordInput.type === 'password' ? 'text' : 'password';
-            passwordInput.type = type;
-            
-            // Toggle icon
-            if (type === 'text') {
-                togglePassword.classList.remove('bx-hide');
-                togglePassword.classList.add('bx-show');
-            } else {
-                togglePassword.classList.remove('bx-show');
-                togglePassword.classList.add('bx-hide');
-            }
-        });
-        
-        // Form submission
-        loginForm.addEventListener('submit', (e) => {
+        btnText.dataset.defaultText = btnText.textContent;
+
+        bindPasswordToggle(togglePassword, passwordInput);
+
+        usernameInput?.addEventListener('input', () => clearError(usernameInput, document.getElementById('usernameError')));
+        passwordInput?.addEventListener('input', () => clearError(passwordInput, document.getElementById('passwordError')));
+
+        const savedUsername = localStorage.getItem('savedUsername');
+        if (savedUsername && usernameInput && rememberMe) {
+            usernameInput.value = savedUsername;
+            rememberMe.checked = true;
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value;
+
+            const username = usernameInput?.value.trim();
+            const password = passwordInput?.value;
             let valid = true;
-            
-            // Validation
+
             if (!username) {
                 showError(usernameInput, document.getElementById('usernameError'));
                 valid = false;
             }
-            
+
             if (!password || password.length < 6) {
                 showError(passwordInput, document.getElementById('passwordError'));
                 valid = false;
             }
-            
+
             if (!valid) return;
-            
-            // Show loading
-            loginBtn.disabled = true;
-            spinner.style.display = 'inline-block';
-            btnText.textContent = 'Logging in...';
-            
-            // Send to backend
-            fetch('http://localhost:5000/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                loginBtn.disabled = false;
-                spinner.style.display = 'none';
-                btnText.textContent = 'Login';
-                
-                if (data.success) {
-                    // Save token and username
-                    localStorage.setItem('token', data.token || 'mock-token-' + Date.now());
-                    localStorage.setItem('username', username);
-                    
-                    // Remember me
-                    if (rememberMe.checked) {
-                        localStorage.setItem('savedUsername', username);
-                    } else {
-                        localStorage.removeItem('savedUsername');
-                    }
-                    
-                    showToast(data.message, 'success');
-                    
-                    // Redirect to products page
-                    setTimeout(() => {
-                        window.location.href = 'products.html';
-                    }, 1000);
-                } else {
-                    showToast(data.message, 'error');
+
+            setLoadingState(loginBtn, spinner, btnText, 'Logging in...', true);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                setLoadingState(loginBtn, spinner, btnText, 'Logging in...', false);
+
+                if (!response.ok || !data.success) {
+                    showToast(data.message || 'Login failed', 'error');
+                    return;
                 }
-            })
-            .catch(() => {
-                loginBtn.disabled = false;
-                spinner.style.display = 'none';
-                btnText.textContent = 'Login';
-                showToast('Server error. Please try again.', 'error');
-            });
+
+                saveSessionFromResponse(data, username);
+                if (rememberMe?.checked) {
+                    localStorage.setItem('savedUsername', username);
+                } else {
+                    localStorage.removeItem('savedUsername');
+                }
+
+                showToast(data.message || 'Login successful', 'success');
+                setTimeout(() => { navigateTo('products.html'); }, 900);
+            } catch (error) {
+                setLoadingState(loginBtn, spinner, btnText, 'Logging in...', false);
+                showToast('Cannot connect to server. Start backend with: npm start', 'error');
+            }
         });
-        
-        // Load saved username
-        const savedUsername = localStorage.getItem('savedUsername');
-        if (savedUsername) {
-            usernameInput.value = savedUsername;
-            rememberMe.checked = true;
-        }
     }
-    
-    // REGISTER FORM - Password Strength (already in register.html inline script)
-    // Toggle password for register page
-    const registerTogglePassword = document.getElementById('togglePassword');
-    const registerPasswordInput = document.getElementById('password');
-    
-    if (registerTogglePassword && registerPasswordInput) {
-        registerTogglePassword.addEventListener('click', () => {
-            const type = registerPasswordInput.type === 'password' ? 'text' : 'password';
-            registerPasswordInput.type = type;
-            
-            // Toggle icon
-            if (type === 'text') {
-                registerTogglePassword.classList.remove('bx-hide');
-                registerTogglePassword.classList.add('bx-show');
+
+    if (registerForm) {
+        const fullnameInput = document.getElementById('fullname');
+        const emailInput = document.getElementById('email');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const agreeTerms = document.getElementById('agreeTerms');
+        const togglePassword = document.getElementById('togglePassword');
+        const registerBtn = document.getElementById('registerBtn');
+        const spinner = document.getElementById('spinner');
+        const btnText = document.getElementById('btnText');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthLabel = document.getElementById('strengthLabel');
+        btnText.dataset.defaultText = btnText.textContent;
+
+        bindPasswordToggle(togglePassword, passwordInput);
+
+        fullnameInput?.addEventListener('input', () => clearError(fullnameInput, document.getElementById('fullnameError')));
+        emailInput?.addEventListener('input', () => clearError(emailInput, document.getElementById('emailError')));
+        usernameInput?.addEventListener('input', () => clearError(usernameInput, document.getElementById('usernameError')));
+        passwordInput?.addEventListener('input', () => {
+            clearError(passwordInput, document.getElementById('passwordError'));
+            const value = passwordInput.value;
+            let score = 0;
+            if (value.length >= 6) score++;
+            if (value.length >= 10) score++;
+            if (/[A-Z]/.test(value)) score++;
+            if (/[0-9]/.test(value)) score++;
+            if (/[^A-Za-z0-9]/.test(value)) score++;
+
+            const widths = ['20%', '40%', '60%', '80%', '100%'];
+            const colors = ['#e53935', '#fb8c00', '#fdd835', '#43a047', '#1b5e20'];
+            const labels = ['Very Weak', 'Weak', 'Fair', 'Strong', 'Very Strong'];
+
+            if (!strengthBar || !strengthLabel) return;
+            if (score > 0) {
+                const idx = Math.min(score - 1, 4);
+                strengthBar.style.width = widths[idx];
+                strengthBar.style.background = colors[idx];
+                strengthLabel.textContent = `Strength: ${labels[idx]}`;
             } else {
-                registerTogglePassword.classList.remove('bx-show');
-                registerTogglePassword.classList.add('bx-hide');
+                strengthBar.style.width = '0';
+                strengthLabel.textContent = '';
+            }
+        });
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const fullname = fullnameInput?.value.trim();
+            const email = emailInput?.value.trim();
+            const username = usernameInput?.value.trim();
+            const password = passwordInput?.value;
+            let valid = true;
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!fullname) {
+                showError(fullnameInput, document.getElementById('fullnameError'));
+                valid = false;
+            }
+            if (!email || !emailRegex.test(email)) {
+                showError(emailInput, document.getElementById('emailError'));
+                valid = false;
+            }
+            if (!username || username.length < 3) {
+                showError(usernameInput, document.getElementById('usernameError'));
+                valid = false;
+            }
+            if (!password || password.length < 6) {
+                showError(passwordInput, document.getElementById('passwordError'));
+                valid = false;
+            }
+            if (!agreeTerms?.checked) {
+                showToast('Please accept the terms and conditions', 'error');
+                valid = false;
+            }
+            if (!valid) return;
+
+            setLoadingState(registerBtn, spinner, btnText, 'Creating...', true);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fullname, email, username, password })
+                });
+                const data = await response.json();
+                setLoadingState(registerBtn, spinner, btnText, 'Creating...', false);
+
+                if (!response.ok || !data.success) {
+                    showToast(data.message || 'Registration failed', 'error');
+                    return;
+                }
+
+                showToast(data.message || 'Account created successfully', 'success');
+                setTimeout(() => { navigateTo('login.html'); }, 1100);
+            } catch (error) {
+                setLoadingState(registerBtn, spinner, btnText, 'Creating...', false);
+                showToast('Cannot connect to server. Start backend with: npm start', 'error');
             }
         });
     }

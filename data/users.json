@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "fullname": "Admin User",
+    "email": "admin@glowcart.com",
+    "username": "admin",
+    "password": "Admin@123"
+  },
+  {
+    "id": 2,
+    "fullname": "Asutosh Mohanty",
+    "email": "asutoshmohanty2k20@gmail.com",
+    "username": "Asutosh_Mohanty",
+    "password": "Ashhu_08"
+  }
+]

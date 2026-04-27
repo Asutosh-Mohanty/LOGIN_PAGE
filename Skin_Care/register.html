@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - GlowCart</title>
-    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="../CSS/auth.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -101,122 +101,6 @@
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
-    <script src="js/auth.js"></script>
-    <script>
-        // Register-specific logic
-        const registerForm = document.getElementById('registerForm');
-        const fullnameInput = document.getElementById('fullname');
-        const emailInput = document.getElementById('email');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const agreeTerms = document.getElementById('agreeTerms');
-        const registerBtn = document.getElementById('registerBtn');
-        
-        registerForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const fullname = fullnameInput.value.trim();
-            const email = emailInput.value.trim();
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value;
-            
-            let valid = true;
-
-            // Validate fullname
-            if (!fullname) {
-                showError(fullnameInput, document.getElementById('fullnameError'));
-                valid = false;
-            }
-
-            // Validate email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email || !emailRegex.test(email)) {
-                showError(emailInput, document.getElementById('emailError'));
-                valid = false;
-            }
-
-            // Validate username
-            if (!username || username.length < 3) {
-                showError(usernameInput, document.getElementById('usernameError'));
-                valid = false;
-            }
-
-            // Validate password
-            if (!password || password.length < 6) {
-                showError(passwordInput, document.getElementById('passwordError'));
-                valid = false;
-            }
-
-            // Check terms
-            if (!agreeTerms.checked) {
-                showToast('Please accept the terms and conditions', 'error');
-                valid = false;
-            }
-
-            if (!valid) return;
-
-            // Show loading
-            registerBtn.disabled = true;
-            document.getElementById('spinner').style.display = 'inline-block';
-            document.getElementById('btnText').textContent = 'Creating...';
-
-            // Send to backend
-            fetch('http://localhost:5000/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fullname, email, username, password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                registerBtn.disabled = false;
-                document.getElementById('spinner').style.display = 'none';
-                document.getElementById('btnText').textContent = 'Create Account';
-
-                if (data.success) {
-                    showToast(data.message, 'success');
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1500);
-                } else {
-                    showToast(data.message, 'error');
-                }
-            })
-            .catch(() => {
-                registerBtn.disabled = false;
-                document.getElementById('spinner').style.display = 'none';
-                document.getElementById('btnText').textContent = 'Create Account';
-                showToast('Server error. Please try again.', 'error');
-            });
-        });
-
-        // Password strength indicator
-        passwordInput.addEventListener('input', () => {
-            clearError(passwordInput, document.getElementById('passwordError'));
-            const val = passwordInput.value;
-
-            let score = 0;
-            if (val.length >= 6) score++;
-            if (val.length >= 10) score++;
-            if (/[A-Z]/.test(val)) score++;
-            if (/[0-9]/.test(val)) score++;
-            if (/[^A-Za-z0-9]/.test(val)) score++;
-
-            const widths = ['20%','40%','60%','80%','100%'];
-            const colors = ['#e53935','#fb8c00','#fdd835','#43a047','#1b5e20'];
-            const labels = ['Very Weak','Weak','Fair','Strong','Very Strong'];
-
-            const strengthBar = document.getElementById('strengthBar');
-            const strengthLabel = document.getElementById('strengthLabel');
-
-            if (score > 0) {
-                strengthBar.style.width = widths[Math.min(score-1,4)];
-                strengthBar.style.background = colors[Math.min(score-1,4)];
-                strengthLabel.textContent = `Strength: ${labels[Math.min(score-1,4)]}`;
-            } else {
-                strengthBar.style.width = '0';
-                strengthLabel.textContent = '';
-            }
-        });
-    </script>
+    <script src="../JS/auth.js"></script>
 </body>
 </html>

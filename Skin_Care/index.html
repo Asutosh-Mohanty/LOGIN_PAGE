@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlowCart - Premium Skincare</title>
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="../CSS/main.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -27,7 +27,9 @@
                     <i class='bx bx-cart'></i>
                     <span class="cart-count" id="cartCount">0</span>
                 </a>
-                <button class="btn-login" onclick="window.location.href='login.html'">Login</button>
+                <button class="btn-login" onclick="checkLoginAndRedirect()">
+                    <span id="userDisplay">Login</span>
+                </button>
             </div>
         </div>
     </nav>
@@ -90,6 +92,36 @@
         </div>
     </section>
 
+    <!-- About Section -->
+    <section class="info-section" id="about">
+        <div class="info-card">
+            <h2>About GlowCart</h2>
+            <p>
+                GlowCart is a skincare-first shopping experience built to help you discover products
+                that match your skin type, goals, and daily routine. We focus on trusted ingredients,
+                transparent product information, and a smooth buying experience.
+            </p>
+            <div class="info-highlights">
+                <span>Dermat-inspired picks</span>
+                <span>Skin-type filters</span>
+                <span>Fast delivery support</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="info-section" id="contact">
+        <div class="info-card">
+            <h2>Contact Us</h2>
+            <p>Need help choosing products or tracking an order? Reach out to us anytime.</p>
+            <div class="contact-grid">
+                <div><strong>Email:</strong> support@glowcart.com</div>
+                <div><strong>Phone:</strong> +91 90000 00000</div>
+                <div><strong>Hours:</strong> Mon - Sat, 9:00 AM - 8:00 PM</div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
@@ -122,7 +154,7 @@
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
-    <script src="js/main.js"></script>
+    <script src="../JS/main.js"></script>
     <script>
         // Load featured products on homepage
         const featuredProducts = products.slice(0, 4);

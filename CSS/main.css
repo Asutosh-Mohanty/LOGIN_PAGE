@@ -24,10 +24,17 @@
     --shadow-lg: 0 8px 32px rgba(0,0,0,0.15);
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Poppins', Arial, sans-serif;
     color: var(--text-dark);
-    background: var(--bg-light);
+    background:
+        radial-gradient(circle at 20% 0%, #e9f4ff 0%, transparent 35%),
+        radial-gradient(circle at 85% 20%, #ffeef6 0%, transparent 30%),
+        var(--bg-light);
     line-height: 1.6;
     overflow-x: hidden;
 }
@@ -99,6 +106,7 @@ body {
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    position: relative;
 }
 
 .cart-icon {
@@ -143,6 +151,50 @@ body {
     background: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+.settings-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 220px;
+    display: none;
+    flex-direction: column;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    z-index: 1100;
+}
+
+.settings-menu.show {
+    display: flex;
+}
+
+.settings-item {
+    border: none;
+    background: transparent;
+    color: var(--text-dark);
+    text-align: left;
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.settings-item:hover {
+    background: #f3f7fc;
+}
+
+.settings-item.danger {
+    color: var(--error);
+}
+
+.settings-item.danger:hover {
+    background: #fff2f2;
 }
 
 /* ========== HERO SECTION ========== */
@@ -387,6 +439,56 @@ body {
 .feature-card:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-md);
+}
+
+/* ========== INFO SECTIONS ========== */
+.info-section {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.info-card {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 18px;
+    box-shadow: var(--shadow-sm);
+    padding: 2rem;
+}
+
+.info-card h2 {
+    color: var(--primary-dark);
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.info-card p {
+    color: var(--text-light);
+}
+
+.info-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.info-highlights span {
+    background: #edf5ff;
+    color: var(--primary-dark);
+    border: 1px solid #d3e6ff;
+    border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 0.8rem 1rem;
+    margin-top: 1rem;
 }
 
 .feature-card i {
