@@ -187,5 +187,3 @@ For questions or suggestions, reach out via email or GitHub.
 MIT License - Free to use for learning purposes
 
 ---
-
-**Built with ❤️ for learning Full-Stack Development**
