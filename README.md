@@ -15,76 +15,99 @@ Manage their account
 The application integrates frontend UI, backend logic, and database connectivity, simulating a real-world product-based web platform.
 
 🚀 Key Features Implemented
+
 🔐 Authentication System
+
 User Registration
 User Login
 Logout functionality
 Delete account option
 Form validation and validation feedback
+
 🛍️ Product System
+
 Product listing page
 Featured products display
 Dynamic rendering using JavaScript
+
 🛒 Cart Functionality
+
 Add to cart
 Remove items
 Cart count updates
 LocalStorage-based persistence
+
 👤 User Dashboard
+
 Post-login redirection
 Centralized user interface
 Navigation for user-specific actions
+
 🎨 UI/UX Enhancements
+
 Responsive and clean UI design
 Password strength indicator
 Toast notifications
 Smooth animations and transitions
+
 ⚙️ Backend System
+
 Node.js server implementation
 REST API endpoints for authentication
 Database integration for storing user data
+
 🧱 Project Structure
+
 LOGIN_PAGE/
 │
 ├── Skin_Care/
-│   ├── index.html
-│   ├── login.html
-│   ├── register.html
-│   ├── products.html
-│   ├── cart.html
-│   ├── dashboard.html
+│   ├── index.html        (Landing Page)
+│   ├── login.html        (Login Page)
+│   ├── register.html     (Registration Page)
+│   ├── products.html     (Product Listing)
+│   ├── cart.html         (Cart Page)
+│   ├── dashboard.html    (User Dashboard)
 │
 ├── CSS/
-│   ├── main.css
-│   ├── auth.css
-│   ├── product.css
+│   └── style.css         (Styling)
 │
 ├── JS/
-│   └── script.js
+│   └── script.js         (Frontend Logic)
 │
-├── server.js
-├── package.json
-├── package-lock.json
-├── node_modules/
-├── database/ (user data storage / configuration)
-├── README.md
+├── server.js             (Backend Server)
+├── package.json          (Dependencies)
+├── README.md             (Documentation)
+
+
 ⚙️ Technologies Used
+
 🖥️ Frontend
+
 HTML5
 CSS3 (modular styling: main, auth, product)
 JavaScript (Vanilla JS)
+
 🛠️ Backend
+
 Node.js
 Express.js
+
 🗄️ Database
+
 Database integration for storing and managing user data
+
 📦 Dependencies
+
 Managed using package.json
 Installed via node_modules
+
 🔧 Tools
+
 Git & GitHub
 VS Code
+
 🔄 Development Workflow
+
 Designed and built responsive UI using HTML and CSS
 Structured styling into multiple CSS modules (main, auth, product)
 Implemented client-side logic using JavaScript
@@ -100,7 +123,9 @@ Structured project into organized folders
 Managed version control using Git
 Committed and pushed updates to GitHub
 Resolved merge conflicts and maintained clean commit history
+
 💡 How the Application Works
+
 User opens the web application 🌐
 Products are visible without login 👀
 To access full features → login required 🔐
