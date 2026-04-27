@@ -83,4 +83,3 @@ npm start
 ## Notes
 
 - This setup is fully local and does not include deployment.
-- Product images are served from backend static folder (`/images`).
